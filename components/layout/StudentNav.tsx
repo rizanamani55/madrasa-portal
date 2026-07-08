@@ -1,0 +1,114 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+import {
+  LayoutDashboard,
+  User,
+  FileText,
+  BookOpen,
+  ClipboardList,
+  Clock,
+  Megaphone,
+  Download,
+  LogOut,
+  GraduationCap,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const mainNav = [
+  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/profile", icon: User, label: "My Profile" },
+];
+
+const academicNav = [
+  { href: "/results", icon: FileText, label: "Results" },
+  { href: "/timetable", icon: Clock, label: "Timetable" },
+];
+
+const contentNav = [
+  { href: "/notes", icon: BookOpen, label: "Notes" },
+  { href: "/papers", icon: ClipboardList, label: "Question Papers" },
+  { href: "/announcements", icon: Megaphone, label: "Announcements" },
+  { href: "/downloads", icon: Download, label: "Downloads" },
+];
+
+interface Props {
+  student: {
+    name?: string | null;
+    admissionNumber?: string;
+    grade?: string;
+  };
+}
+
+export default function StudentNav({ student }: Props) {
+  const pathname = usePathname();
+
+  function NavGroup({ items, title }: { items: typeof mainNav, title?: string }) {
+    return (
+      <div className="space-y-1">
+        {title && (
+          <p className="px-3.5 text-xxs font-bold uppercase tracking-wider text-muted-foreground/60 dark:text-zinc-500/70 mb-2">
+            {title}
+          </p>
+        )}
+        {items.map(({ href, icon: Icon, label }) => {
+          const isActive = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={cn(
+                "sidebar-link-premium",
+                isActive && "active"
+              )}
+            >
+              <Icon size={18} className="flex-shrink-0" />
+              <span>{label}</span>
+            </Link>
+          );
+        })}
+      </div>
+    );
+  }
+
+  return (
+    <nav className="flex flex-col h-full bg-card dark:bg-zinc-930 border-r border-border-subtle w-72 sticky top-0">
+      {/* Header Profile Card */}
+      <div className="p-5 border-b border-border-subtle">
+        <div className="flex items-center gap-3.5">
+          <div className="w-10 h-10 bg-emerald-550/10 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-550/20 flex-shrink-0">
+            <GraduationCap className="w-5 h-5 text-emerald-550 dark:text-emerald-400" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+              {student.name ?? "Student Portal"}
+            </p>
+            <p className="text-xs text-muted-foreground truncate">
+              {student.admissionNumber} · {student.grade}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Links Scroll area */}
+      <div className="flex-1 px-4 py-6 space-y-6 overflow-y-auto">
+        <NavGroup items={mainNav} />
+        <NavGroup items={academicNav} title="Academics" />
+        <NavGroup items={contentNav} title="Content" />
+      </div>
+
+      {/* Logout pinned at bottom */}
+      <div className="p-4 border-t border-border-subtle">
+        <button
+          onClick={() => signOut({ callbackUrl: "/" })}
+          className="sidebar-link-premium w-full text-red-500 dark:text-red-400 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-300"
+        >
+          <LogOut size={18} className="flex-shrink-0" />
+          <span>Logout</span>
+        </button>
+      </div>
+    </nav>
+  );
+}
