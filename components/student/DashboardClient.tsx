@@ -15,9 +15,11 @@ import {
   ClipboardList,
   Calendar,
   Sparkles,
+  Download,
+  HelpCircle,
 } from "lucide-react";
-import { Student, Announcement, Mark } from "@/lib/types";
-import { formatDate, getGradeColor, getPriorityColor, truncate } from "@/lib/utils";
+import { Student, Announcement, Mark, Note, QuestionPaper } from "@/lib/types";
+import { formatDate, getGradeColor, getPriorityColor, truncate, getSupabaseFileUrl } from "@/lib/utils";
 import type { Session } from "next-auth";
 import {
   AreaChart,
@@ -44,6 +46,8 @@ interface Props {
   student: Student | undefined;
   announcements: Announcement[];
   recentMarks: Mark[];
+  notes: Note[];
+  papers: QuestionPaper[];
   session: Session | null;
 }
 
@@ -64,6 +68,8 @@ export default function DashboardClient({
   student,
   announcements,
   recentMarks,
+  notes,
+  papers,
   session,
 }: Props) {
   const [mounted, setMounted] = useState(false);
@@ -131,6 +137,12 @@ export default function DashboardClient({
       score: getSubjectPercentage(m).pct,
     }))
     .reverse();
+
+  // Combine notes and papers for the recent materials section
+  const recentMaterials = [
+    ...notes.map(n => ({ id: n.id, type: 'Note', title: n.title, subject: n.subject, date: n.uploadDate, url: getSupabaseFileUrl(n.fileId) })),
+    ...papers.map(p => ({ id: p.id, type: 'Question Paper', title: p.title, subject: p.subject, date: p.uploadDate, url: getSupabaseFileUrl(p.fileId) }))
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6);
 
   return (
     <motion.div
@@ -252,37 +264,49 @@ export default function DashboardClient({
           </div>
         </div>
 
-        {/* Quick Actions Panel */}
+        {/* Latest Study Materials Panel */}
         <div className="card-premium p-6 flex flex-col h-[380px] overflow-y-auto">
-          <h2 className="font-bold text-zinc-900 dark:text-zinc-50 mb-4 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-amber-500" />
-            Quick Resources
-          </h2>
-          <p className="text-xs text-muted-foreground mb-4">Direct shortcuts to essential school files</p>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-bold text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-amber-500" />
+              Latest Study Materials
+            </h2>
+          </div>
+          <p className="text-xs text-muted-foreground mb-4">Recent notes and question papers for your class</p>
+          
           <div className="space-y-2.5 flex-1">
-            {[
-              { href: "/notes", icon: BookOpen, label: "Browse Study Notes", desc: "Download PDF guides", color: "bg-emerald-500/10 text-emerald-500" },
-              { href: "/papers", icon: ClipboardList, label: "Practice Papers", desc: "Past exam question banks", color: "bg-blue-500/10 text-blue-500" },
-              { href: "/timetable", icon: Clock, label: "Class Timetable", desc: "View daily periods & timings", color: "bg-purple-500/10 text-purple-500" },
-              { href: "/results", icon: FileText, label: "Detailed Results", desc: "Term scoring breakdowns", color: "bg-amber-500/10 text-amber-500" },
-            ].map(({ href, icon: Icon, label, desc, color }) => (
-              <Link
-                key={href}
-                href={href}
-                className="flex items-center gap-3.5 p-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900 border border-transparent hover:border-border-subtle transition-all group"
-              >
-                <div className={`w-9 h-9 ${color} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform`}>
-                  <Icon className="w-5 h-5" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-sm text-zinc-900 dark:text-zinc-50 group-hover:text-emerald-500 transition-colors">
-                    {label}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{desc}</p>
-                </div>
-                <ArrowUpRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-              </Link>
-            ))}
+            {recentMaterials.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center py-6">
+                <HelpCircle className="w-10 h-10 text-zinc-300 dark:text-zinc-800 mb-3" />
+                <p className="font-bold text-sm text-zinc-900 dark:text-zinc-100">Nothing found</p>
+                <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">No notes or question papers have been added for your class yet.</p>
+              </div>
+            ) : (
+              recentMaterials.map((mat) => (
+                <a
+                  key={mat.id}
+                  href={mat.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3.5 p-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900 border border-transparent hover:border-border-subtle transition-all group"
+                >
+                  <div className={`w-9 h-9 ${mat.type === 'Note' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-blue-500/10 text-blue-500'} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform`}>
+                    {mat.type === 'Note' ? <BookOpen className="w-5 h-5" /> : <ClipboardList className="w-5 h-5" />}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-sm text-zinc-900 dark:text-zinc-50 group-hover:text-emerald-500 transition-colors truncate">
+                      {mat.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                      <span className="font-medium text-zinc-600 dark:text-zinc-400">{mat.subject}</span>
+                      <span>&bull;</span>
+                      <span>{mat.type}</span>
+                    </p>
+                  </div>
+                  <Download className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                </a>
+              ))
+            )}
           </div>
         </div>
       </motion.div>

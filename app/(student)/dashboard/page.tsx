@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth/config";
 import { getMyProfile } from "@/actions/student";
 import { getPublicAnnouncements } from "@/actions/announcements";
 import { getMyMarks } from "@/actions/marks";
+import { getMyNotes } from "@/actions/notes";
+import { getMyPapers } from "@/actions/papers";
 
 import { Metadata } from "next";
 import { calcPercentage } from "@/lib/utils";
@@ -14,15 +16,19 @@ export const metadata: Metadata = {
 export default async function DashboardPage() {
   const session = await auth();
 
-  const [profileRes, announcementsRes, marksRes] = await Promise.all([
+  const [profileRes, announcementsRes, marksRes, notesRes, papersRes] = await Promise.all([
     getMyProfile(),
     getPublicAnnouncements(),
     getMyMarks(),
+    getMyNotes(),
+    getMyPapers(),
   ]);
 
   const student = profileRes.data;
   const announcements = announcementsRes.data ?? [];
   const marks = marksRes.data ?? [];
+  const notes = notesRes.data ?? [];
+  const papers = papersRes.data ?? [];
 
   // Calculate overall performance
   const totalObtained = marks.reduce((s, m) => {
@@ -40,6 +46,8 @@ export default async function DashboardPage() {
       student={student}
       announcements={announcements}
       recentMarks={marks.slice(0, 5)}
+      notes={notes}
+      papers={papers}
       session={session}
     />
   );
