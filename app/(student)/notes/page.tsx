@@ -30,7 +30,7 @@ export default async function NotesPage() {
           uploadDate: n.uploadDate,
           tag: n.subject,
         }))}
-        emptyIcon={BookOpen}
+        emptyIcon={<BookOpen className="w-8 h-8" />}
         emptyMessage="No notes available yet"
         emptySubtext="Your teacher will upload notes here"
       />

@@ -136,6 +136,7 @@ export default function StudentsPage() {
                 <th>Admission No.</th>
                 <th>Grade</th>
                 <th className="hidden md:table-cell">Phone</th>
+                <th className="hidden lg:table-cell">Email</th>
                 <th className="hidden lg:table-cell">Status</th>
                 <th className="text-right">Actions</th>
               </tr>
@@ -143,7 +144,7 @@ export default function StudentsPage() {
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-16 text-muted-foreground bg-card">
+                  <td colSpan={7} className="text-center py-16 text-muted-foreground bg-card">
                     <HelpCircle className="w-10 h-10 mx-auto mb-3 text-muted-foreground/50" />
                     <p className="font-semibold text-zinc-950 dark:text-zinc-100">No students found</p>
                     <p className="text-xs mt-1">Try expanding your search query or filters</p>
@@ -170,6 +171,7 @@ export default function StudentsPage() {
                       </span>
                     </td>
                     <td className="text-muted-foreground hidden md:table-cell">{s.phone}</td>
+                    <td className="text-muted-foreground hidden lg:table-cell text-xs">{s.email || "—"}</td>
                     <td className="hidden lg:table-cell">
                       <span className={`badge-premium text-xxs ${s.status === "active" ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-red-500/10 text-red-600 dark:text-red-400"}`}>
                         {s.status}
@@ -251,6 +253,7 @@ function StudentFormModal({ student, onClose, onSubmit, isPending }: FormProps) 
     parentName: "",
     grade: "Grade 1",
     phone: "",
+    email: "",
     status: "active",
   };
 
@@ -296,18 +299,22 @@ function StudentFormModal({ student, onClose, onSubmit, isPending }: FormProps) 
               { key: "name", label: "Full Name" },
               { key: "parentName", label: "Parent's Name" },
               { key: "phone", label: "Phone Number" },
+              { key: "email", label: "Email Address", type: "email" },
             ] as const
           ).map((field) => (
             <div key={field.key} className={("colSpan" in field && field.colSpan) ? "sm:col-span-2" : ""}>
-              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wide">
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wide flex items-center gap-2">
                 {field.label}
+                {field.key === "email" && (
+                  <span className="text-[10px] font-normal text-muted-foreground bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">Optional</span>
+                )}
               </label>
               <input
-                type="text"
+                type={"type" in field ? field.type : "text"}
                 value={String(form[field.key as keyof Student] ?? "")}
                 onChange={(e) => handleChange(field.key as keyof Student, e.target.value)}
                 disabled={"disabled" in field ? field.disabled : false}
-                required
+                required={field.key !== "email"}
                 className="input-premium"
               />
             </div>

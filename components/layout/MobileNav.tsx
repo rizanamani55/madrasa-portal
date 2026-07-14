@@ -59,8 +59,6 @@ interface Props {
 export default function MobileNav({ role, user }: Props) {
   const [open, setOpen] = useState(false);
   const items = role === "student" ? studentItems : adminItems;
-  const logoutUrl = role === "student" ? "/" : "/admin/login";
-
   return (
     <>
       <button
@@ -148,7 +146,7 @@ export default function MobileNav({ role, user }: Props) {
                 <button
                   onClick={() => {
                     setOpen(false);
-                    signOut({ callbackUrl: logoutUrl });
+                    signOut({ callbackUrl: `${window.location.origin}/` });
                   }}
                   className="sidebar-link-premium w-full text-red-500 dark:text-red-400 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-300"
                 >

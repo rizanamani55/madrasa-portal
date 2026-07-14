@@ -102,8 +102,8 @@ export default function StudentNav({ student }: Props) {
       {/* Logout pinned at bottom */}
       <div className="p-4 border-t border-border-subtle">
         <button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="sidebar-link-premium w-full text-red-500 dark:text-red-400 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-300"
+          onClick={() => signOut({ callbackUrl: `${window.location.origin}/` })}
+          className="sidebar-link-premium w-full text-red-500 dark:text-red-400 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-300 group"
         >
           <LogOut size={18} className="flex-shrink-0" />
           <span>Logout</span>

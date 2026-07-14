@@ -28,7 +28,7 @@ export default async function PapersPage() {
           uploadDate: p.uploadDate,
           tag: p.examType,
         }))}
-        emptyIcon={ClipboardList}
+        emptyIcon={<ClipboardList className="w-8 h-8" />}
         emptyMessage="No question papers available yet"
         emptySubtext="Past exam papers will appear here"
       />

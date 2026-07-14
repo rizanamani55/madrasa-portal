@@ -16,11 +16,9 @@ export default auth((req: NextRequest & { auth: unknown }) => {
     pathname.startsWith(r)
   ) && !isPublic;
 
-  // If not authenticated and trying to access protected route → redirect to login
+  // If not authenticated and trying to access protected route → redirect to /login
   if (!session && (isAdminRoute || isStudentRoute)) {
-    const loginUrl = isAdminRoute
-      ? new URL("/admin/login", req.nextUrl.origin)
-      : new URL("/", req.nextUrl.origin);
+    const loginUrl = new URL("/login", req.nextUrl.origin);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
@@ -29,16 +27,17 @@ export default auth((req: NextRequest & { auth: unknown }) => {
   if (session) {
     const role = session.user?.role;
 
-    // Admin trying to access student routes (allow for simplicity)
-    // Student trying to access admin routes → redirect to dashboard
+    // Student trying to access admin routes → redirect to student dashboard
     if (isAdminRoute && role !== "admin") {
       return NextResponse.redirect(
         new URL("/dashboard", req.nextUrl.origin)
       );
     }
 
-    // If authenticated and trying to access login pages → redirect to appropriate dashboard
-    if (isPublic && (pathname === "/" || pathname === "/admin/login")) {
+    // If authenticated and trying to access public login pages → redirect to appropriate dashboard
+    const isLoginPage =
+      pathname === "/login" || pathname === "/admin/login";
+    if (isPublic && isLoginPage) {
       if (role === "admin") {
         return NextResponse.redirect(
           new URL("/admin/dashboard", req.nextUrl.origin)

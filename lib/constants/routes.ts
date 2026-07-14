@@ -3,7 +3,7 @@
 export const ROUTES = {
   // Public
   HOME: "/",
-  LOGIN: "/",
+  LOGIN: "/login",
   ADMIN_LOGIN: "/admin/login",
 
   // Student routes
@@ -47,4 +47,4 @@ export const STUDENT_ROUTES = [
 export const ADMIN_ROUTES = ["/admin"];
 
 // Public routes (no auth required)
-export const PUBLIC_ROUTES = ["/", "/admin/login"];
+export const PUBLIC_ROUTES = ["/", "/login", "/admin/login"];

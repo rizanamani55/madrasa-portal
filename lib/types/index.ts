@@ -11,6 +11,7 @@ export interface Student {
   parentName: string;
   grade: Grade;
   phone: string;
+  email?: string;
   status: "active" | "inactive";
 }
 

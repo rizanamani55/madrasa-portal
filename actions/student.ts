@@ -31,6 +31,7 @@ export async function getMyProfile(): Promise<ApiResponse<Student>> {
         parentName: student.parent_name,
         grade: student.grade as any,
         phone: student.phone,
+        email: student.email,
         status: student.status as any,
       },
     };
@@ -64,6 +65,7 @@ export async function fetchAllStudents(): Promise<ApiResponse<Student[]>> {
       parentName: s.parent_name,
       grade: s.grade,
       phone: s.phone,
+      email: s.email,
       status: s.status,
     }));
 
@@ -100,6 +102,7 @@ export async function addStudent(
         parent_name: data.parentName,
         grade: data.grade,
         phone: data.phone,
+        email: data.email || null,
         status: data.status,
       },
     ]);
@@ -145,6 +148,7 @@ export async function editStudent(
         parent_name: data.parentName,
         grade: data.grade,
         phone: data.phone,
+        email: data.email || null,
         status: data.status,
         updated_at: new Date().toISOString(),
       })

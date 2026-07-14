@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, Eye, Download, FileText, X, ExternalLink, HelpCircle } from "lucide-react";
+import { motion } from "framer-motion";
+import { Search, FileText, HelpCircle, ExternalLink } from "lucide-react";
 import { formatDate, getSupabaseFileUrl } from "@/lib/utils";
+import Link from "next/link";
 
 interface FileItem {
   id: string;
@@ -18,19 +19,18 @@ interface FileItem {
 
 interface Props {
   items: FileItem[];
-  emptyIcon: React.ElementType;
+  emptyIcon: React.ReactNode;
   emptyMessage: string;
   emptySubtext: string;
 }
 
 export default function FileListClient({
   items,
-  emptyIcon: EmptyIcon,
+  emptyIcon,
   emptyMessage,
   emptySubtext,
 }: Props) {
   const [search, setSearch] = useState("");
-  const [previewFile, setPreviewFile] = useState<FileItem | null>(null);
 
   const filtered = items.filter(
     (item) =>
@@ -40,12 +40,15 @@ export default function FileListClient({
 
   if (items.length === 0) {
     return (
-      <div className="card-premium flex flex-col items-center justify-center py-20 px-6 text-center border-dashed bg-zinc-550/5 dark:bg-zinc-900/10">
-        <div className="w-16 h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center mb-5 text-muted-foreground border border-border-subtle">
-          <EmptyIcon className="w-8 h-8" />
+      <div className="card-premium flex flex-col items-center justify-center py-24 px-6 text-center border-dashed bg-zinc-550/5 dark:bg-zinc-900/10">
+        <div className="w-16 h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center mb-5 text-rose-500 border border-border-subtle">
+          {emptyIcon}
         </div>
-        <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">{emptyMessage}</h3>
-        <p className="text-sm text-muted-foreground mt-1.5 max-w-sm">{emptySubtext}</p>
+        <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">Sorry, {emptyMessage.toLowerCase()}</h3>
+        <p className="text-sm text-muted-foreground mt-1.5 max-w-sm mb-6">{emptySubtext}</p>
+        <Link href="/dashboard" className="btn-premium-primary">
+          Back to Dashboard
+        </Link>
       </div>
     );
   }
@@ -118,22 +121,15 @@ export default function FileListClient({
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setPreviewFile(item)}
-                    className="btn-premium-secondary flex-1 justify-center py-2 px-3 text-xs"
-                  >
-                    <Eye size={14} />
-                    Preview
-                  </button>
+                <div className="flex gap-2 mt-4">
                   <a
                     href={getSupabaseFileUrl(item.fileId)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-premium-primary flex-1 justify-center py-2 px-3 text-xs"
                   >
-                    <Download size={14} />
-                    Download
+                    <ExternalLink size={14} />
+                    Preview
                   </a>
                 </div>
               </div>
@@ -142,72 +138,6 @@ export default function FileListClient({
         </div>
       )}
 
-      {/* PDF Preview Modal */}
-      <AnimatePresence>
-        {previewFile && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-            onClick={() => setPreviewFile(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-card dark:bg-zinc-930 border border-border-subtle rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden"
-            >
-              {/* Modal header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-border-subtle">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <FileText className="w-5 h-5 text-rose-500 flex-shrink-0" />
-                  <p className="font-bold text-sm text-zinc-900 dark:text-zinc-100 truncate">
-                    {previewFile.title}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <a
-                    href={getSupabaseFileUrl(previewFile.fileId)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-premium-secondary py-1.5 px-3 text-xs"
-                  >
-                    <Download size={14} />
-                    Download
-                  </a>
-                  <a
-                    href={getSupabaseFileUrl(previewFile.fileId)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-premium-secondary py-1.5 px-3 text-xs"
-                  >
-                    <ExternalLink size={14} />
-                    Open Tab
-                  </a>
-                  <button
-                    onClick={() => setPreviewFile(null)}
-                    className="p-1.5 hover:bg-border-subtle rounded-xl text-muted-foreground transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* PDF iframe viewer */}
-              <div className="flex-1 min-h-[50vh] lg:min-h-[60vh] bg-zinc-100 dark:bg-zinc-900">
-                <iframe
-                  src={getSupabaseFileUrl(previewFile.fileId)}
-                  className="w-full h-full border-0"
-                  title={previewFile.title}
-                  allowFullScreen
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

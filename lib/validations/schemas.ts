@@ -51,6 +51,7 @@ export const studentSchema = z.object({
   parentName: z.string().min(2),
   grade: z.enum(GRADES_MUT),
   phone: z.string().regex(/^[0-9+\-\s]{10,15}$/, "Invalid phone number"),
+  email: z.string().email("Invalid email address").optional().or(z.literal("")),
   status: z.enum(["active", "inactive"]).default("active"),
 });
 

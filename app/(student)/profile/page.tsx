@@ -10,6 +10,7 @@ import {
   Hash,
   Users,
   AlertCircle,
+  Mail,
 } from "lucide-react";
 
 export const metadata: Metadata = { title: "My Profile" };
@@ -34,6 +35,7 @@ export default async function ProfilePage() {
     { label: "Parent's Name", value: student.parentName, icon: Users },
     { label: "Grade", value: student.grade, icon: GraduationCap },
     { label: "Phone", value: student.phone, icon: Phone },
+    ...(student.email ? [{ label: "Email", value: student.email, icon: Mail }] : []),
   ];
 
   return (
