@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Search, Trash2, ClipboardList, X, Loader2, Link2, AlertCircle, CheckCircle2, HelpCircle } from "lucide-react";
+import { Plus, Search, Trash2, ClipboardList, X, Loader2, Link2, AlertCircle, CheckCircle2, HelpCircle, Eye } from "lucide-react";
 import { QuestionPaper } from "@/lib/types";
 import { GRADES, SUBJECTS_BY_GRADE, EXAM_TYPES } from "@/lib/constants/grades";
 import { formatDate, getCurrentAcademicYear } from "@/lib/utils";
@@ -91,7 +91,18 @@ export default function AdminPapersPage() {
                   <td><span className="badge-premium bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xxs font-bold">{p.examType}</span></td>
                   <td className="text-muted-foreground text-xs hidden md:table-cell">{p.academicYear}</td>
                   <td className="text-right">
-                    <button onClick={() => handleDelete(p.id)} disabled={isPending} className="p-2 hover:bg-red-500/10 rounded-lg text-muted-foreground hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                    <div className="flex items-center justify-end gap-1">
+                      <a
+                        href={p.fileId}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Preview"
+                        className="p-2 hover:bg-emerald-500/10 rounded-lg text-muted-foreground hover:text-emerald-600 transition-colors inline-flex"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </a>
+                      <button onClick={() => handleDelete(p.id)} disabled={isPending} title="Delete" className="p-2 hover:bg-red-500/10 rounded-lg text-muted-foreground hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                    </div>
                   </td>
                 </tr>
               ))}
