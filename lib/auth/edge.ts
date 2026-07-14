@@ -4,8 +4,8 @@ export const { auth } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
   session: { strategy: "jwt" },
   pages: {
-    signIn: "/",
-    error: "/",
+    signIn: "/login",
+    error: "/login",
   },
   providers: [], // No providers needed in Edge runtime for token checking
   callbacks: {
