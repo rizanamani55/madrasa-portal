@@ -36,7 +36,7 @@ export const admissionLoginSchema = z.object({
     .min(1, "Admission number is required")
     .max(20, "Invalid admission number")
     .regex(/^[A-Za-z0-9\-\/]+$/, "Invalid admission number format"),
-  name: z.string().min(2, "Name is required to login"),
+  phone: z.string().min(1, "Mobile number is required"),
 });
 
 export const adminLoginSchema = z.object({

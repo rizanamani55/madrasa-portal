@@ -52,14 +52,14 @@ function UnifiedLoginContent() {
     setError("");
 
     if (!identifier.trim()) {
-      setError("Please enter your admission number or email.");
+      setError("Please enter your mobile number or email.");
       return;
     }
     if (!secret.trim()) {
       setError(
         isAdminMode
           ? "Please enter your password."
-          : "Please enter your full name."
+          : "Please enter your admission number."
       );
       return;
     }
@@ -81,12 +81,12 @@ function UnifiedLoginContent() {
       } else {
         // Student flow
         const result = await signIn("student", {
-          admissionNumber: identifier.trim(),
-          name: secret.trim(),
+          phone: identifier.trim(),
+          admissionNumber: secret.trim(),
           redirect: false,
         });
         if (result?.error) {
-          setError("Invalid Admission Number, Email, or Password.");
+          setError("Invalid Mobile Number, Email, or Password.");
         } else {
           router.push(callbackUrl ?? "/dashboard");
           router.refresh();
@@ -95,9 +95,9 @@ function UnifiedLoginContent() {
     });
   }
 
-  const secretLabel = isAdminMode ? "Password" : "Your Full Name";
-  const secretPlaceholder = isAdminMode ? "••••••••" : "e.g. Mohammed Ibrahim";
-  const SecretIcon = isAdminMode ? Lock : User;
+  const secretLabel = isAdminMode ? "Password" : "Admission Number";
+  const secretPlaceholder = isAdminMode ? "••••••••" : "e.g. 1234";
+  const SecretIcon = isAdminMode ? Lock : Hash;
 
   return (
     <div className="min-h-screen flex">
@@ -244,7 +244,7 @@ function UnifiedLoginContent() {
                   htmlFor="identifier"
                   className="block text-sm font-semibold text-slate-700 mb-2"
                 >
-                  Admission Number or Email
+                  Mobile Number or Email
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -278,7 +278,7 @@ function UnifiedLoginContent() {
                       setIdentifier(e.target.value);
                       setError("");
                     }}
-                    placeholder="IAM-2024-001 or admin@example.com"
+                    placeholder="9876543210 or admin@example.com"
                     autoComplete="username"
                     className="block w-full pl-10 pr-4 py-3.5 text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm placeholder:text-slate-400"
                   />
@@ -426,7 +426,7 @@ function UnifiedLoginContent() {
                 className="mt-5 space-y-3 text-center text-sm text-slate-500"
               >
                 <p>
-                  Don&apos;t know your admission number?{" "}
+                  Don&apos;t know your login credentials?{" "}
                   <span className="text-emerald-600 font-medium">
                     Contact your class teacher.
                   </span>

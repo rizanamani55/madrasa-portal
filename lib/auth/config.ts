@@ -17,8 +17,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       id: "student",
       name: "Admission Number",
       credentials: {
-        name: { label: "Student Name", type: "text" },
-        admissionNumber: { label: "Admission Number", type: "text" },
+        phone: { label: "Mobile Number", type: "text" },
+        admissionNumber: { label: "Admission Number", type: "password" },
       },
       async authorize(credentials) {
         const parsed = admissionLoginSchema.safeParse(credentials);
@@ -29,14 +29,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             .from("students")
             .select("*")
             .eq("admission_number", parsed.data.admissionNumber)
+            .eq("phone", parsed.data.phone)
             .single();
 
           if (error || !student || student.status !== "active") {
-            return null;
-          }
-
-          // Verify name (case-insensitive match)
-          if (student.name.toLowerCase().trim() !== parsed.data.name.toLowerCase().trim()) {
             return null;
           }
 
