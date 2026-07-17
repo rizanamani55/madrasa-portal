@@ -127,6 +127,7 @@ export const trackerRecordSchema = z.object({
   asr: z.boolean().default(false),
   magrib: z.boolean().default(false),
   isha: z.boolean().default(false),
+  prayerMarks: z.number().min(0, "Marks cannot be negative").default(0),
   quranPages: z.number().min(0, "Pages cannot be negative").default(0),
 });
 
