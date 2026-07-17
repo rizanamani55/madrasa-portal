@@ -131,6 +131,27 @@ export interface AuditLog {
   details: string;
 }
 
+// ─── Prayer & Quran Tracker ──────────────────────────────────
+export interface PrayerQuranRecord {
+  id?: string;
+  studentId: string;
+  month: number;
+  year: number;
+  day: number;
+  subh: boolean;
+  duhr: boolean;
+  asr: boolean;
+  magrib: boolean;
+  isha: boolean;
+  prayerMarks: number;
+  quranPages: number;
+  quranMarks: number;
+  locked: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+
 // ─── API Response ────────────────────────────────────────────
 export interface ApiResponse<T = unknown> {
   success: boolean;

@@ -17,6 +17,7 @@ import {
   Sparkles,
   Download,
   HelpCircle,
+  Activity,
 } from "lucide-react";
 import { Student, Announcement, Mark, Note, QuestionPaper } from "@/lib/types";
 import { formatDate, getGradeColor, getPriorityColor, truncate, getSupabaseFileUrl } from "@/lib/utils";
@@ -49,6 +50,13 @@ interface Props {
   notes: Note[];
   papers: QuestionPaper[];
   session: Session | null;
+  trackerStats?: {
+    prayerCompleted: number;
+    totalPrayersRequired: number;
+    quranPages: number;
+    prayerMarks: number;
+    quranMarks: number;
+  };
 }
 
 const containerVariants = {
@@ -71,6 +79,7 @@ export default function DashboardClient({
   notes,
   papers,
   session,
+  trackerStats,
 }: Props) {
   const [mounted, setMounted] = useState(false);
 
@@ -175,6 +184,52 @@ export default function DashboardClient({
           </div>
         </div>
       </motion.div>
+
+      {/* Tracker Widget */}
+      {trackerStats && (
+        <motion.div variants={itemVariants} className="card-premium p-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-emerald-500/10 rounded-xl">
+                <Activity className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">Prayer & Quran Progress</h3>
+                <p className="text-sm text-zinc-500">Track your daily devotion for the current month</p>
+              </div>
+            </div>
+            <Link 
+              href="/tracker" 
+              className="mt-4 md:mt-0 flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm"
+            >
+              Continue Tracking
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-zinc-50 dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800">
+              <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Prayers Completed</p>
+              <div className="flex items-end gap-2">
+                <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{trackerStats.prayerCompleted}</span>
+                <span className="text-sm font-medium text-zinc-400 mb-1">/ {trackerStats.totalPrayersRequired}</span>
+              </div>
+            </div>
+            <div className="bg-zinc-50 dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800">
+              <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Quran Pages</p>
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{trackerStats.quranPages}</p>
+            </div>
+            <div className="bg-zinc-50 dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800">
+              <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Prayer Marks</p>
+              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{trackerStats.prayerMarks}</p>
+            </div>
+            <div className="bg-zinc-50 dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800">
+              <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Quran Marks</p>
+              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{trackerStats.quranMarks}</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Quick Stats Grid */}
       <motion.div variants={itemVariants}>

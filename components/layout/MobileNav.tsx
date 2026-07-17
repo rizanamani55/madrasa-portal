@@ -21,11 +21,13 @@ import {
   BarChart2,
   RefreshCw,
   Settings,
+  Activity
 } from "lucide-react";
 
 const studentItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/profile", icon: User, label: "My Profile" },
+  { href: "/tracker", icon: Activity, label: "Prayer & Quran Tracker" },
   { href: "/results", icon: FileText, label: "Results" },
   { href: "/notes", icon: BookOpen, label: "Notes" },
   { href: "/papers", icon: ClipboardList, label: "Question Papers" },
@@ -36,6 +38,7 @@ const studentItems = [
 
 const adminItems = [
   { href: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/admin/tracker", icon: Activity, label: "Prayer Tracker" },
   { href: "/admin/students", icon: Users, label: "Students" },
   { href: "/admin/marks", icon: BarChart2, label: "Marks" },
   { href: "/admin/notes", icon: BookOpen, label: "Notes" },

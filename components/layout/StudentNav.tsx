@@ -14,6 +14,7 @@ import {
   Download,
   LogOut,
   GraduationCap,
+  Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ const mainNav = [
 ];
 
 const academicNav = [
+  { href: "/tracker", icon: Activity, label: "Prayer & Quran Tracker" },
   { href: "/results", icon: FileText, label: "Results" },
   { href: "/timetable", icon: Clock, label: "Timetable" },
 ];

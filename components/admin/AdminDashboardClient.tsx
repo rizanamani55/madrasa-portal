@@ -43,6 +43,13 @@ interface Stats {
 
 interface Props {
   stats: Stats;
+  trackerStats?: {
+    completedToday: number;
+    pendingToday: number;
+    quranPagesToday: number;
+    avgCompletionRate: number;
+    topStudents: { admissionNumber: string, name: string, score: number }[];
+  };
 }
 
 const containerVariants = {
@@ -55,7 +62,7 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
 };
 
-export default function AdminDashboardClient({ stats }: Props) {
+export default function AdminDashboardClient({ stats, trackerStats }: Props) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -158,6 +165,64 @@ export default function AdminDashboardClient({ stats }: Props) {
           );
         })}
       </motion.div>
+
+      {/* Admin Tracker Widget */}
+      {trackerStats && (
+        <motion.div variants={itemVariants} className="card-premium p-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-emerald-500/10 rounded-xl">
+                <Activity className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">Prayer Tracker Overview (Today)</h3>
+                <p className="text-sm text-zinc-500">Live monitoring of today's student submissions</p>
+              </div>
+            </div>
+            <Link 
+              href="/admin/tracker" 
+              className="mt-4 md:mt-0 flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-semibold rounded-xl transition-colors shadow-sm"
+            >
+              Manage Trackers
+              <ArrowUpRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-4 border border-emerald-100 dark:border-emerald-900/30">
+              <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">Completed Today</p>
+              <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">{trackerStats.completedToday}</p>
+            </div>
+            <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 border border-amber-100 dark:border-amber-900/30">
+              <p className="text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-1">Pending Update</p>
+              <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{trackerStats.pendingToday}</p>
+            </div>
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-100 dark:border-blue-900/30">
+              <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">Quran Pages Today</p>
+              <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{trackerStats.quranPagesToday}</p>
+            </div>
+            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 border border-purple-100 dark:border-purple-900/30">
+              <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-1">Avg Completion Rate</p>
+              <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{trackerStats.avgCompletionRate}%</p>
+            </div>
+          </div>
+
+          {trackerStats.topStudents && trackerStats.topStudents.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Top 10 Students (This Month)</p>
+              <div className="flex flex-wrap gap-2">
+                {trackerStats.topStudents.map((stu, i) => (
+                  <div key={stu.admissionNumber} className="flex items-center gap-2 px-3 py-1.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm">
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">#{i + 1}</span>
+                    <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate max-w-[120px]">{stu.name}</span>
+                    <span className="text-xs text-zinc-500">({stu.score} pts)</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </motion.div>
+      )}
 
       {/* Analytics Charts Section */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">

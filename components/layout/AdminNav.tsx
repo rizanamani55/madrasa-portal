@@ -15,6 +15,7 @@ import {
   Settings as SettingsIcon,
   LogOut,
   GraduationCap,
+  Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ const mainNav = [
 ];
 
 const academicsNav = [
+  { href: "/admin/tracker", icon: Activity, label: "Prayer Tracker" },
   { href: "/admin/students", icon: Users, label: "Students" },
   { href: "/admin/marks", icon: BarChart2, label: "Marks" },
 ];

@@ -117,6 +117,19 @@ export const announcementSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
+export const trackerRecordSchema = z.object({
+  studentId: z.string().min(1, "Student ID is required"),
+  month: z.number().min(1).max(12),
+  year: z.number().min(2020).max(2100),
+  day: z.number().min(1).max(31),
+  subh: z.boolean().default(false),
+  duhr: z.boolean().default(false),
+  asr: z.boolean().default(false),
+  magrib: z.boolean().default(false),
+  isha: z.boolean().default(false),
+  quranPages: z.number().min(0, "Pages cannot be negative").default(0),
+});
+
 export type AdmissionLoginInput = z.infer<typeof admissionLoginSchema>;
 export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
 export type StudentInput = z.infer<typeof studentSchema>;
@@ -125,3 +138,4 @@ export type NoteInput = z.infer<typeof noteSchema>;
 export type QuestionPaperInput = z.infer<typeof questionPaperSchema>;
 export type TimetablePeriodInput = z.infer<typeof timetablePeriodSchema>;
 export type AnnouncementInput = z.infer<typeof announcementSchema>;
+export type TrackerRecordInput = z.infer<typeof trackerRecordSchema>;

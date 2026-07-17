@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { getAdminStats } from "@/actions/dashboard";
+import { getAdminTrackerStats } from "@/actions/tracker";
 import AdminDashboardClient from "@/components/admin/AdminDashboardClient";
 
 export const metadata: Metadata = {
@@ -8,9 +9,15 @@ export const metadata: Metadata = {
 
 export default async function AdminDashboardPage() {
   let stats;
+  let trackerStats;
   console.log("Rendering Admin Dashboard Page");
   try {
-    stats = await getAdminStats();
+    const [statsRes, trackerRes] = await Promise.all([
+      getAdminStats(),
+      getAdminTrackerStats()
+    ]);
+    stats = statsRes;
+    trackerStats = trackerRes?.data;
   } catch (err) {
     console.error("Failed to load admin stats:", err);
     stats = {
@@ -22,7 +29,8 @@ export default async function AdminDashboardPage() {
       recentActivity: [],
       gradeData: [],
     };
+    trackerStats = { completedToday: 0, pendingToday: 0, quranPagesToday: 0, avgCompletionRate: 0, topStudents: [] };
   }
 
-  return <AdminDashboardClient stats={stats} />;
+  return <AdminDashboardClient stats={stats} trackerStats={trackerStats} />;
 }
