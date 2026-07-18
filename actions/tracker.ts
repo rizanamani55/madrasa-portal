@@ -86,7 +86,7 @@ export async function upsertTrackerDay(input: TrackerRecordInput): Promise<ApiRe
     }
 
     // Calculate marks
-    const prayerMarks = parsed.prayerMarks;
+    const prayerMarks = parsed.subh + parsed.duhr + parsed.asr + parsed.magrib + parsed.isha;
     const quranMarks = parsed.quranPages * 5;
 
     // Upsert

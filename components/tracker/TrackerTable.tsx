@@ -43,11 +43,11 @@ export default function TrackerTable({
       month,
       year,
       day,
-      subh: false,
-      duhr: false,
-      asr: false,
-      magrib: false,
-      isha: false,
+      subh: 0,
+      duhr: 0,
+      asr: 0,
+      magrib: 0,
+      isha: 0,
       prayerMarks: 0,
       quranPages: 0,
       quranMarks: 0,
@@ -55,22 +55,9 @@ export default function TrackerTable({
     } as PrayerQuranRecord;
   });
 
-  const handleTogglePrayer = (day: number, prayer: typeof PRAYERS[number]) => {
-    if (readonly) return;
-    
-    setData(prev => prev.map(d => {
-      if (d.day === day) {
-        if (d.locked) return d;
-        const nextState = !d[prayer];
-        const newD = { ...d, [prayer]: nextState };
-        saveRecord(newD);
-        return newD;
-      }
-      return d;
-    }));
-  };
 
-  const handleFieldChange = (day: number, field: 'quranPages' | 'prayerMarks', value: number) => {
+
+  const handleFieldChange = (day: number, field: 'quranPages' | 'prayerMarks' | typeof PRAYERS[number], value: number) => {
     if (readonly) return;
     setData(prev => prev.map(d => {
       if (d.day === day) {
@@ -78,6 +65,8 @@ export default function TrackerTable({
         const newD = { ...d, [field]: value };
         if (field === 'quranPages') {
           newD.quranMarks = value * 5;
+        } else if (PRAYERS.includes(field as any)) {
+          newD.prayerMarks = (newD.subh || 0) + (newD.duhr || 0) + (newD.asr || 0) + (newD.magrib || 0) + (newD.isha || 0);
         }
         return newD;
       }
@@ -85,13 +74,15 @@ export default function TrackerTable({
     }));
   };
 
-  const handleBlurField = (day: number, field: 'quranPages' | 'prayerMarks', value: number) => {
+  const handleBlurField = (day: number, field: 'quranPages' | 'prayerMarks' | typeof PRAYERS[number], value: number) => {
     if (readonly) return;
     const record = data.find(d => d.day === day);
     if (record && !record.locked) {
       const newD = { ...record, [field]: value };
       if (field === 'quranPages') {
         newD.quranMarks = value * 5;
+      } else if (PRAYERS.includes(field as any)) {
+        newD.prayerMarks = (newD.subh || 0) + (newD.duhr || 0) + (newD.asr || 0) + (newD.magrib || 0) + (newD.isha || 0);
       }
       saveRecord(newD);
     }
@@ -180,32 +171,22 @@ export default function TrackerTable({
                 </td>
                 {PRAYERS.map(p => (
                   <td key={p} className="px-4 py-3 text-center">
-                    <button
-                      type="button"
+                    <input
+                      type="number"
+                      min="0"
                       disabled={readonly || row.locked}
-                      onClick={() => handleTogglePrayer(row.day, p)}
-                      className={`w-6 h-6 rounded-md flex items-center justify-center transition-all mx-auto ${
-                        row[p] 
-                          ? 'bg-emerald-500 text-white shadow-sm' 
-                          : 'bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-transparent hover:bg-zinc-200 dark:hover:bg-zinc-700'
-                      } ${readonly || row.locked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer cursor-pointer hover:scale-105 active:scale-95'}`}
-                    >
-                      <Check className="w-4 h-4" />
-                    </button>
+                      value={row[p] === 0 ? "" : row[p]}
+                      onChange={(e) => handleFieldChange(row.day, p, parseInt(e.target.value) || 0)}
+                      onBlur={(e) => handleBlurField(row.day, p, parseInt(e.target.value) || 0)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+                      className="w-12 mx-auto text-center py-1.5 px-1 text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-zinc-900 dark:text-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      placeholder="0"
+                    />
                   </td>
                 ))}
                 
-                <td className="px-4 py-3 text-center">
-                  <input
-                    type="number"
-                    min="0"
-                    disabled={readonly || row.locked}
-                    value={row.prayerMarks === 0 ? "" : row.prayerMarks}
-                    onChange={(e) => handleFieldChange(row.day, 'prayerMarks', parseInt(e.target.value) || 0)}
-                    onBlur={(e) => handleBlurField(row.day, 'prayerMarks', parseInt(e.target.value) || 0)}
-                    className="w-16 mx-auto text-center py-1.5 px-2 text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-zinc-900 dark:text-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                    placeholder="0"
-                  />
+                <td className="px-4 py-3 text-center font-semibold text-emerald-600 dark:text-emerald-400">
+                  {row.prayerMarks}
                 </td>
                 
                 <td className="px-4 py-3 text-center">
@@ -216,6 +197,7 @@ export default function TrackerTable({
                     value={row.quranPages === 0 ? "" : row.quranPages}
                     onChange={(e) => handleFieldChange(row.day, 'quranPages', parseInt(e.target.value) || 0)}
                     onBlur={(e) => handleBlurField(row.day, 'quranPages', parseInt(e.target.value) || 0)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
                     className="w-16 mx-auto text-center py-1.5 px-2 text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-zinc-900 dark:text-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="0"
                   />

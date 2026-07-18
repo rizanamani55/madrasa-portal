@@ -138,11 +138,11 @@ export interface PrayerQuranRecord {
   month: number;
   year: number;
   day: number;
-  subh: boolean;
-  duhr: boolean;
-  asr: boolean;
-  magrib: boolean;
-  isha: boolean;
+  subh: number;
+  duhr: number;
+  asr: number;
+  magrib: number;
+  isha: number;
   prayerMarks: number;
   quranPages: number;
   quranMarks: number;
