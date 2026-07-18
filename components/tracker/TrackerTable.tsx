@@ -175,9 +175,9 @@ export default function TrackerTable({
                       type="number"
                       min="0"
                       disabled={readonly || row.locked}
-                      value={row[p] === 0 ? "" : row[p]}
-                      onChange={(e) => handleFieldChange(row.day, p, parseInt(e.target.value) || 0)}
-                      onBlur={(e) => handleBlurField(row.day, p, parseInt(e.target.value) || 0)}
+                      value={row[p] === undefined ? 0 : row[p]}
+                      onChange={(e) => handleFieldChange(row.day, p, e.target.value === '' ? 0 : Number(e.target.value))}
+                      onBlur={(e) => handleBlurField(row.day, p, e.target.value === '' ? 0 : Number(e.target.value))}
                       onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
                       className="w-12 mx-auto text-center py-1.5 px-1 text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-zinc-900 dark:text-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed"
                       placeholder="0"
@@ -194,9 +194,9 @@ export default function TrackerTable({
                     type="number"
                     min="0"
                     disabled={readonly || row.locked}
-                    value={row.quranPages === 0 ? "" : row.quranPages}
-                    onChange={(e) => handleFieldChange(row.day, 'quranPages', parseInt(e.target.value) || 0)}
-                    onBlur={(e) => handleBlurField(row.day, 'quranPages', parseInt(e.target.value) || 0)}
+                    value={row.quranPages === undefined ? 0 : row.quranPages}
+                    onChange={(e) => handleFieldChange(row.day, 'quranPages', e.target.value === '' ? 0 : Number(e.target.value))}
+                    onBlur={(e) => handleBlurField(row.day, 'quranPages', e.target.value === '' ? 0 : Number(e.target.value))}
                     onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
                     className="w-16 mx-auto text-center py-1.5 px-2 text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-zinc-900 dark:text-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="0"
