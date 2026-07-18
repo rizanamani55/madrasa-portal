@@ -59,24 +59,53 @@ export default function TrackerTable({
 
   const handleFieldChange = (day: number, field: 'quranPages' | 'prayerMarks' | typeof PRAYERS[number], value: number) => {
     if (readonly) return;
-    setData(prev => prev.map(d => {
-      if (d.day === day) {
-        if (d.locked) return d;
-        const newD = { ...d, [field]: value };
+    setData(prev => {
+      const exists = prev.find(d => d.day === day);
+      if (!exists) {
+        const newRecord: PrayerQuranRecord = {
+          studentId: admissionNumber,
+          month,
+          year,
+          day,
+          subh: 0,
+          duhr: 0,
+          asr: 0,
+          magrib: 0,
+          isha: 0,
+          prayerMarks: 0,
+          quranPages: 0,
+          quranMarks: 0,
+          locked: false,
+          [field]: value
+        };
         if (field === 'quranPages') {
-          newD.quranMarks = value * 5;
+          newRecord.quranMarks = value * 5;
         } else if (PRAYERS.includes(field as any)) {
-          newD.prayerMarks = (newD.subh || 0) + (newD.duhr || 0) + (newD.asr || 0) + (newD.magrib || 0) + (newD.isha || 0);
+          newRecord.prayerMarks = (newRecord.subh || 0) + (newRecord.duhr || 0) + (newRecord.asr || 0) + (newRecord.magrib || 0) + (newRecord.isha || 0);
         }
-        return newD;
+        return [...prev, newRecord];
       }
-      return d;
-    }));
+
+      return prev.map(d => {
+        if (d.day === day) {
+          if (d.locked) return d;
+          const newD = { ...d, [field]: value };
+          if (field === 'quranPages') {
+            newD.quranMarks = value * 5;
+          } else if (PRAYERS.includes(field as any)) {
+            newD.prayerMarks = (newD.subh || 0) + (newD.duhr || 0) + (newD.asr || 0) + (newD.magrib || 0) + (newD.isha || 0);
+          }
+          return newD;
+        }
+        return d;
+      });
+    });
   };
 
   const handleBlurField = (day: number, field: 'quranPages' | 'prayerMarks' | typeof PRAYERS[number], value: number) => {
     if (readonly) return;
-    const record = data.find(d => d.day === day);
+    // Find from the full 'days' array to ensure we get the fallback data if it wasn't strictly in 'data' yet
+    const record = days.find(d => d.day === day);
     if (record && !record.locked) {
       const newD = { ...record, [field]: value };
       if (field === 'quranPages') {
