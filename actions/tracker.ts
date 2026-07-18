@@ -114,8 +114,8 @@ export async function upsertTrackerDay(input: TrackerRecordInput): Promise<ApiRe
 
     if (error) throw error;
 
-    revalidatePath("/(student)/tracker");
-    revalidatePath("/(student)/dashboard");
+    revalidatePath("/tracker");
+    revalidatePath("/dashboard");
 
     return { 
       success: true, 
